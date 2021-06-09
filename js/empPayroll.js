@@ -1,3 +1,4 @@
+
 //making salary output dynamic
 const salary= document.querySelector('#salary');
 const output= document.querySelector('.salary-output');
