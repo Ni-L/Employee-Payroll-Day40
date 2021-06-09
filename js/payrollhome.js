@@ -34,6 +34,7 @@ const createInnerHtml=()=>
     for(const empPayrollData of empPayrollList){
         //adding data of empPayrollData into innerHtml using literals and placeholders, as loop iterates,  more data is added in inner html
         //using template literals to get particular values from objects obtained from local storage.
+        //calling stringifyDate function from utility class to convert date into specific format.
         innerHtml= `${innerHtml}
         <tr>
             <td><img class="profile" alt="" src="${empPayrollData._profilePic}"></td>
@@ -42,7 +43,7 @@ const createInnerHtml=()=>
             <td>${getDeptHtml(empPayrollData._department)}
             </td>
             <td>${empPayrollData._salary}</td>
-            <td>${empPayrollData._startDate}</td>
+            <td>${stringifyDate(empPayrollData._startDate)}</td>
             <td><img id="${empPayrollData._id}" onclick= "remove(this)" alt="delete" src="../assets/icons/delete-black-18dp.svg">
             <img id="${empPayrollData._id}" onclick= "update(this)" alt="edit" src="../assets/icons/create-black-18dp.svg"></td>
         </tr>`;
@@ -95,4 +96,24 @@ const createEmployeePayrollJSON = () => {
           deptHtml= `${deptHtml}<div class="dept-label">${dept}</div>`
       }
       return deptHtml;
+  }
+
+  //Adding function to delete elements when click on delete icon in actions
+  const remove= (node)=>{
+      //empPayrollList is array of data which is instatiated once all the content of webpage gets loaded
+      let empPayrollData= empPayrollList.find(empData=>empData._id=node.id);
+      //after finding out, if element exist or node with given id, index of particular id is find out
+      if(!empPayrollData) return;
+      //for finding out index, emppayroll list is converted to array only of id by mapping and then
+      //emppayrolldata id is compared to get index
+      const index= empPayrollList.map(empData=>empData._id).indexOf(empPayrollData.id);
+      //using splice to remove element from array
+      empPayrollList.splice(index,1);
+      //updating the data into local storage
+      localStorage.setItem("EmployeePayrollList",JSON.stringify(empPayrollList));
+      //updating the count of employees here, otherwise refresh will be required to update count
+      //refresh slows the code, hence update of count is done here only.
+      document.querySelector(".emp-count").textContent= empPayrollList.length;
+      //showing updated data of local storage
+      createInnerHtml();
   }
